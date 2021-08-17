@@ -103,9 +103,12 @@ where $\boldsymbol{u}$ amd $D_T$ are velocity field and diffusivity of scalar fi
 
 
 ## 4. Discretization
+In CFD, we use Gauss's theorem to transform integrals of divergence terms into sum of inner products on surfaces of each cell (see below). Such inner product requires values of variables at cell surfaces (e.g., $\phi_f$ in the equation below). Thus, we need to choose scheme that decides the strategy of choosing variable values at cell surfaces
+$$
+\iiint_{V}(\nabla \cdot \mathbf{u}\phi) \mathrm{d} V=\oiint_{S}(\phi\mathbf{u} \cdot \hat{\mathbf{n}}) \mathrm{d} S \simeq \sum_f \phi_f \mathbf{u}_f \cdot \hat{\mathbf{n}}_f.
+$$
 
 ### fvSchemes
-
 For each term in governing equation, OpenFOAM provides options for discretizing partial derivatives. The information of discretization scheme (i.e., names of discretization methods) is stored in the file `fvSchemes`
 
 > If we wish to use the same scheme for all the terms, we can simply use `default xxxx` in each scheme card.
@@ -122,9 +125,9 @@ For each term in governing equation, OpenFOAM provides options for discretizing 
         .
     }
     `
-
-### fcSolution
-
+- OpenFOAM uses `phi` to represent **flux** coming in/out at cell surfaces.
+### fvSolution
+The file `fvSolution` encodes all the information of solvers for solving different fields (e.g., T, p, U,...).
 ### Numerical/False diffusion
 
 Extra attention should be paid to so-called "numerical diffusion" phenomena. Discretized PDE in [Eulerian simulation](https://en.wikipedia.org/wiki/Euler_method) is known to be more diffusive than the original differential equations. 
@@ -132,6 +135,22 @@ Extra attention should be paid to so-called "numerical diffusion" phenomena. Dis
 A simple workaround could be replacing `upwind` scheme with `central difference` scheme for the **convection** term when [Peclet number](https://en.wikipedia.org/wiki/P%C3%A9clet_number) is less than 2. Because of this limitation, the central difference scheme is not a general-purpose scheme for CFD problems.
 
 Another solution is making the mesh finer, but one should always be cautious when the diffusivity of your fluid is small, especially when it is smaller than the diffusivity of false diffusion.
+
+In OpenFOAM, we have options of `Gauss GQUICK`,`Gauss upwind`, `Gauss linearUpwind`, `Gauss linear`, and `Gauss cubic` for discretization schemes of divergence terms in the file `fvSchemes`. 
+
+> The option `Gauss cubic` tends to reflect unwanted oscillation at boundary, so be careful when using it.
+
+> When `Gauss linearUpwind` is used, make sure you set up default gradient scheme by using `gradSchemes` card, e.g., `gradSchemes {default Gausss linear}`, and set divergence scheme using: 
+```css
+divSchemes
+{
+    default         none;
+    div(phi,T)      Gauss linearUpwind grad(T);
+}
+```
+> where `T` in `grad()` can be replaced by other scalar field.
+
+In general, **`linearUpwind` scheme is arguably the best compromise btw stability and accuracy for most of CFD simulations.**
 
 ## 5. Postprocessing
 we can convert data to VKT format using the command of `foamToVTK`
