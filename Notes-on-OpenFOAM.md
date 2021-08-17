@@ -51,7 +51,9 @@ The inputs for `blockMesh` are stored in the file `blockMeshDict` in the "system
 
 - `scale` (or "convertToMeters" in earlier versions) specifies relationships between input units and SI unit "meter", e.g., `scale 0.1` indicates inputs having a unit of `0.1m`;
 
-- `vertices` dictionary includes coordinates that define demains. 
+- `vertices` dictionary includes coordinates that define domains. 
+
+- `edges` dictionary includes information of arc/curves in the domain.
 
 - `block` dictionary defines subdomains. each entry has a format of 
 
@@ -80,12 +82,34 @@ where `type` could be `patch`, `wall`, and `symmetryPlane`(where geometry mirror
 
 > After running the command `blockMesh`, you can find additional entry of "defaultFaces" which bundles all the faces undefined in the file "blockMeshDict".
 
-### Courant Number: a way to avoid divergence
-The Courant number is defined as
-
-$$C=\Delta t\frac{u_{x_i}}{\Delta x_{i}}\leq C_{max}$$
-
-where $\Delta t$ is the time step, and $C_{max}$ is the largest Courant number your simulation can tolerate. In OpenFoam, the distance travelled by fluid at dimension $x_i$ within one time step, $u_{x_i}\Delta t$, divided by the spacial increment at the same dimention, $\Delta x_i$ must be less than 1 (i.e., $C_{max}<1$).
+### 2.1 2D/1D geometry in OpenFOAM
+In OpenFOAM, 2 dimensional geometries are currently treated by defining a mesh in 3 dimensions, where **the front and back plane** are defined as the `empty` boundary patch type. Similarly, 1D goemetries have their **front, back, left and right planes** defined as `empty` boundary patch type. Empty faces are stored in boundary card using a format of 
+```css
+boundary
+(
+     sides
+    {
+        type patch;
+        faces
+        (
+            (1 2 6 5)
+            (0 4 7 3)
+        );
+    }
+    empty
+    {
+        type empty;
+        faces
+        (
+            (0 1 5 4)
+            (5 6 7 4)
+            (3 7 6 2)
+            (0 3 2 1)
+        );
+    }
+);
+```
+The `sides` dictionary in the example above contains faces treated as boundary of the simulation.
 
 ## 3. Solvers
 
@@ -109,7 +133,7 @@ $$
 \iiint_{V}(\nabla \cdot \mathbf{u}\phi) \mathrm{d} V=\oiint_{S}(\phi\mathbf{u} \cdot \hat{\mathbf{n}}) \mathrm{d} S \simeq \sum_f \phi_f \mathbf{u}_f \cdot \hat{\mathbf{n}}_f.
 $$
 
-### fvSchemes
+### 4.1 fvSchemes
 For each term in governing equation, OpenFOAM provides options for discretizing partial derivatives. The information of discretization scheme (i.e., names of discretization methods) is stored in the file `fvSchemes`
 
 > If we wish to use the same scheme for all the terms, we can simply use `default xxxx` in each scheme card.
@@ -128,9 +152,18 @@ For each term in governing equation, OpenFOAM provides options for discretizing 
     }
     ```
 - OpenFOAM uses `phi` to represent **flux** coming in/out at cell surfaces.
-### fvSolution
+### 4.2 fvSolution
 The file `fvSolution` encodes all the information of solvers for solving different fields (e.g., T, p, U,...).
-### Numerical/False diffusion
+
+## 5. Numerical Issue to Consider
+### 5.1 Courant Number
+The Courant number is defined as
+
+$$C=\Delta t\frac{u_{x_i}}{\Delta x_{i}}\leq C_{max}$$
+
+where $\Delta t$ is the time step, and $C_{max}$ is the largest Courant number your simulation can tolerate. In OpenFoam, the distance travelled by fluid at dimension $x_i$ within one time step, $u_{x_i}\Delta t$, divided by the spacial increment at the same dimention, $\Delta x_i$ must be less than 1 (i.e., $C_{max}<1$).
+
+### 5.2 Numerical/False diffusion
 
 Extra attention should be paid to so-called "numerical diffusion" phenomena. Discretized PDE in [Eulerian simulation](https://en.wikipedia.org/wiki/Euler_method) is known to be more diffusive than the original differential equations. 
 
@@ -154,12 +187,12 @@ divSchemes
 
 In general, **`linearUpwind` scheme is arguably the best compromise btw stability and accuracy for most of CFD simulations.**
 
-## 5. Postprocessing
+## 6. Postprocessing
 we can convert data to VKT format using the command of `foamToVTK`
 
 Before creating new filters, select a pipline in "Pipeline Browser" and click "Apply" in "Properties" menu below the browser.
 
-### Data sampling functionality
+### 6.1 Data sampling functionality
 
 We can sample data points in our domain using the command of `sample`. The information of sampling procedures is recorded in the file `sample` (or `sampleDict`) in `system` folder. An example of such file can be found at `$FOAM_TUTORIALS/compressible/sonicFoam/laminar/shockTube/system`.
 
@@ -167,3 +200,10 @@ We can sample data points in our domain using the command of `sample`. The infor
         `postProcess -func xxxx` at the parent case folder
     * where `xxxx` is the name of sampling dictionary
     * we can also append `-noZero` at the end of command to no sampling data at time step 0.
+
+## 7. Runtime Settings
+### 7.1 Change settings between a series of simulations
+- Change `startFrom` to `latestTime`
+- Consider deleting `phi` in the latest output folder, if you want to change initial velocity settings. This is because for some solvers `phi` overwrites `U` after simulation starts
+- Change `writeControl` to `runTime`, and `writeInterval` to appropriate simulation time
+- Increase `endTime` to allow OpenFOAM to start a new simulation in the series
