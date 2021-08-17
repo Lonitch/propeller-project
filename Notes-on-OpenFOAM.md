@@ -1,4 +1,4 @@
-# Notes on OpenFOAM
+# Elementary Notes on OpenFOAM
 
 ## 1. Case File Structure
 Each calculation case folder (i.e. parent folder) has three subfolders: "0" (or "0.orig" as a backup file), "constant", and "system".
@@ -66,7 +66,8 @@ The inputs for `blockMesh` are stored in the file `blockMeshDict` in the "system
 
 - `boundary` dictionary sets boundaries that enclose the domain. Each entry has a format of 
 
-`name
+```css
+name
 {
     type xxxx;
     faces
@@ -74,10 +75,10 @@ The inputs for `blockMesh` are stored in the file `blockMeshDict` in the "system
         (v1 v2 v3 v4)
     );
 }
-`
+```
 where `type` could be `patch`, `wall`, and `symmetryPlane`(where geometry mirror applies, useful for creating semi-infinite shape). **The sequence of vertices follows the right-hand rule**(with the thumb pointing outwards).
 
->> After running the command `blockMesh`, you can find additional entry of "defaultFaces" which bundles all the faces undefined in the file "blockMeshDict".
+> After running the command `blockMesh`, you can find additional entry of "defaultFaces" which bundles all the faces undefined in the file "blockMeshDict".
 
 ### Courant Number: a way to avoid divergence
 The Courant number is defined as
@@ -115,7 +116,8 @@ For each term in governing equation, OpenFOAM provides options for discretizing 
 
 - The shceme cards include: `ddtSchemes`, `gradSchemes`,`divSchemes`,`laplacianSchemes`,`interpolationSchemes`, and `snGradSchemes`(Component of gradient normal to a cell face)
 - Each card has a format of
-    `name
+    ```css
+    name
     {
         default xxxx;
         term1 xxxx;
@@ -124,7 +126,7 @@ For each term in governing equation, OpenFOAM provides options for discretizing 
         .
         .
     }
-    `
+    ```
 - OpenFOAM uses `phi` to represent **flux** coming in/out at cell surfaces.
 ### fvSolution
 The file `fvSolution` encodes all the information of solvers for solving different fields (e.g., T, p, U,...).
