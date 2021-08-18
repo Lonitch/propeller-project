@@ -1,0 +1,2 @@
+## Build mesh with blender+swiftblock
+This folder contains blender-generated geometry of a hook, which is then used to generate mesh using `swiftblock` add-on. The `hook` folder contains case files for a simulation of applying pulling forces on the hook.
