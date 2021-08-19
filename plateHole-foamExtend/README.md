@@ -1,0 +1,1 @@
+This folder contains results of the plateHole problem, solved by using `elasticSolidFoam` solver of `foam-extend-4.1`.
