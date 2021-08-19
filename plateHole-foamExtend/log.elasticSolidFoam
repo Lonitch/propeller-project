@@ -1,0 +1,208 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+d2dt2Schemes
+{
+    default         Euler;
+}
+
+ddtSchemes
+{
+    default         Euler;
+}
+
+gradSchemes
+{
+    default         none;
+    grad(U)         extendedLeastSquares 0;
+    snGradCorr(U)   extendedLeastSquares 0;
+}
+
+divSchemes
+{
+    default         none;
+    div(sigma)      Gauss skewCorrected linear;
+}
+
+laplacianSchemes
+{
+    default         none;
+    laplacian(DU,U) Gauss linear corrected;
+}
+
+snGradSchemes
+{
+    snGrad(U)       corrected;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+
+// ************************************************************************* //
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    U
+    {
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       1e-07;
+        relTol          0.1;
+    }
+}
+
+solidMechanics
+{
+    nCorrectors           10000;
+    U                     1e-06;
+    //divSigmaExp           standard;
+    divSigmaExp           surface;
+    //divSigmaExp           decompose;
+    //divSigmaExp           laplacian;
+    historyPatch          right;
+    solidInterfaceMethod  none;
+    predictor             yes;
+    infoFrequency         100;
+    aitkenRelaxation      yes;
+}
+
+relaxationFactors
+{
+}
+
+
+// ************************************************************************* //
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
+\*---------------------------------------------------------------------------*/
+Build  : 4.1-70b064d0f326
+Exec   : elasticSolidFoam
+Date   : Aug 19 2021
+Time   : 12:06:08
+Host   : "MSI"
+PID    : 3120
+CtrlDict : "/home/lonitch/plateHole/system/controlDict"
+Case   : /home/lonitch/plateHole
+nProcs : 1
+sigFpe : Enabling floating point exception trapping (FOAM_SIGFPE).
+allowSystemOperations : Disallowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+
+
+Reading g
+Reading field U
+
+Patch right	Traction boundary field: U
+Patch up	Traction boundary field: U
+Patch hole	Traction boundary field: U
+Selecting rheology model linearElastic
+Creating constitutive model
+Force-displacement for patch right will be written to forceDisp.dat
+Selecting divSigmaExp calculation method surface
+
+Starting time loop
+
+Time = 1
+
+
+Predicting U, gradU and snGradU based on V,gradV and snGradV
+
+DICPCG:  Solving for Ux, Initial residual = 1, Final residual = 0.0965169, No Iterations 231
+PCG:  Solving for Uy, Initial residual = 0, Final residual = 0, No Iterations 0
+	Time 1, Corrector 0, Solving for U using fvMatrix<Type>::solve, res = 1, rel res = 1, aitken = 0.1, inner iters = 0
+DICPCG:  Solving for Ux, Initial residual = 0.000314459, Final residual = 2.9917e-05, No Iterations 172
+DICPCG:  Solving for Uy, Initial residual = 1, Final residual = 0.0968937, No Iterations 229
+DICPCG:  Solving for Ux, Initial residual = 0.000169627, Final residual = 1.4568e-05, No Iterations 184
+DICPCG:  Solving for Uy, Initial residual = 0.0004109, Final residual = 3.43614e-05, No Iterations 183
+DICPCG:  Solving for Ux, Initial residual = 8.09768e-05, Final residual = 7.6989e-06, No Iterations 176
+DICPCG:  Solving for Uy, Initial residual = 0.000218023, Final residual = 2.17566e-05, No Iterations 168
+DICPCG:  Solving for Ux, Initial residual = 4.61373e-05, Final residual = 4.47594e-06, No Iterations 132
+DICPCG:  Solving for Uy, Initial residual = 0.000102895, Final residual = 8.71492e-06, No Iterations 184
+DICPCG:  Solving for Ux, Initial residual = 2.86262e-05, Final residual = 2.78497e-06, No Iterations 171
+DICPCG:  Solving for Uy, Initial residual = 6.04238e-05, Final residual = 5.72948e-06, No Iterations 182
+DICPCG:  Solving for Ux, Initial residual = 1.80914e-05, Final residual = 1.79658e-06, No Iterations 163
+DICPCG:  Solving for Uy, Initial residual = 3.90713e-05, Final residual = 3.88693e-06, No Iterations 162
+DICPCG:  Solving for Ux, Initial residual = 1.20956e-05, Final residual = 1.15409e-06, No Iterations 99
+DICPCG:  Solving for Uy, Initial residual = 2.67951e-05, Final residual = 2.55889e-06, No Iterations 137
+DICPCG:  Solving for Ux, Initial residual = 8.16697e-06, Final residual = 7.72907e-07, No Iterations 105
+DICPCG:  Solving for Uy, Initial residual = 1.87431e-05, Final residual = 1.79952e-06, No Iterations 133
+DICPCG:  Solving for Ux, Initial residual = 5.69618e-06, Final residual = 5.54276e-07, No Iterations 107
+DICPCG:  Solving for Uy, Initial residual = 1.35449e-05, Final residual = 1.34026e-06, No Iterations 135
+DICPCG:  Solving for Ux, Initial residual = 3.70517e-06, Final residual = 3.68305e-07, No Iterations 136
+DICPCG:  Solving for Uy, Initial residual = 9.42454e-06, Final residual = 8.93722e-07, No Iterations 136
+DICPCG:  Solving for Ux, Initial residual = 2.05049e-06, Final residual = 2.04602e-07, No Iterations 131
+DICPCG:  Solving for Uy, Initial residual = 5.77912e-06, Final residual = 5.48388e-07, No Iterations 137
+DICPCG:  Solving for Ux, Initial residual = 2.74516e-06, Final residual = 2.63186e-07, No Iterations 92
+DICPCG:  Solving for Uy, Initial residual = 7.58697e-06, Final residual = 6.92785e-07, No Iterations 84
+DICPCG:  Solving for Ux, Initial residual = 9.53512e-06, Final residual = 8.89441e-07, No Iterations 55
+DICPCG:  Solving for Uy, Initial residual = 2.58769e-05, Final residual = 2.56961e-06, No Iterations 46
+DICPCG:  Solving for Ux, Initial residual = 1.49245e-05, Final residual = 1.33394e-06, No Iterations 32
+DICPCG:  Solving for Uy, Initial residual = 4.294e-05, Final residual = 3.91589e-06, No Iterations 44
+DICPCG:  Solving for Ux, Initial residual = 1.31961e-05, Final residual = 1.29491e-06, No Iterations 21
+DICPCG:  Solving for Uy, Initial residual = 3.96983e-05, Final residual = 3.86806e-06, No Iterations 28
+DICPCG:  Solving for Ux, Initial residual = 9.33267e-06, Final residual = 8.75753e-07, No Iterations 16
+DICPCG:  Solving for Uy, Initial residual = 2.89909e-05, Final residual = 2.83633e-06, No Iterations 21
+DICPCG:  Solving for Ux, Initial residual = 6.22157e-06, Final residual = 6.13408e-07, No Iterations 11
+DICPCG:  Solving for Uy, Initial residual = 1.94935e-05, Final residual = 1.94103e-06, No Iterations 13
+DICPCG:  Solving for Ux, Initial residual = 3.66923e-06, Final residual = 3.46195e-07, No Iterations 8
+DICPCG:  Solving for Uy, Initial residual = 1.14933e-05, Final residual = 1.14384e-06, No Iterations 11
+DICPCG:  Solving for Ux, Initial residual = 2.00488e-06, Final residual = 1.87576e-07, No Iterations 8
+DICPCG:  Solving for Uy, Initial residual = 6.37166e-06, Final residual = 6.2531e-07, No Iterations 62
+DICPCG:  Solving for Ux, Initial residual = 9.05984e-07, Final residual = 9.97941e-08, No Iterations 34
+DICPCG:  Solving for Uy, Initial residual = 2.89696e-06, Final residual = 2.76269e-07, No Iterations 90
+DICPCG:  Solving for Ux, Initial residual = 4.10926e-07, Final residual = 9.69423e-08, No Iterations 42
+DICPCG:  Solving for Uy, Initial residual = 1.32728e-06, Final residual = 1.25587e-07, No Iterations 104
+DICPCG:  Solving for Ux, Initial residual = 2.27095e-07, Final residual = 9.65402e-08, No Iterations 3
+DICPCG:  Solving for Uy, Initial residual = 6.71119e-07, Final residual = 9.95317e-08, No Iterations 80
+
+Time 1, Solving for U, Initial residual = 1, Final residual = 6.71119e-07, Relative residual = 1.4725e-05, No outer iterations 23
+ExecutionTime = 5.1 s  ClockTime = 5 s
+Max epsilonEq = 1.16327e-07
+Max sigmaEq = 26844.7
+Found patch right, writing y force and displacement to file
+ExecutionTime = 6.02 s  ClockTime = 6 s
+
+End
+
+Segmentation fault
