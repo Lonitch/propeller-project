@@ -207,3 +207,6 @@ We can sample data points in our domain using the command of `sample`. The infor
 - Consider deleting `phi` in the latest output folder, if you want to change initial velocity settings. This is because for some solvers `phi` overwrites `U` after simulation starts
 - Change `writeControl` to `runTime`, and `writeInterval` to appropriate simulation time
 - Increase `endTime` to allow OpenFOAM to start a new simulation in the series
+
+### 7.2 Parallel computation settings
+You might want to consider deleting `decomposePairDict` if you run into trouble when running tutorial using parallel settings.
