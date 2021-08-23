@@ -113,12 +113,12 @@ The `sides` dictionary in the example above contains faces treated as boundary o
 
 ## 3. Solvers
 
-### sonicFoam
+### 3.1 sonicFoam
 
 Transient solver for trans-sonic/supersonic, laminar or turbulent flow of a compressible gas. It is for single-phase, non-isothermal simulations.
 - we will need to set up energy equation in the simulation using `sonicFoam`
 
-### scalarTeansportFoam
+### 3.2 scalarTeansportFoam
 
 Solves a transport equation for a passive scalar. Thus, this solver is suitable to solve diffusion-convection-reaction problems. The solver based on a theory that formulate transport equation for scalar field $T$ as:
 
@@ -126,6 +126,12 @@ $$\frac{\partial T }{\partial t}+\nabla\cdot\boldsymbol{u}T=D_{T}\Delta T$$
 
 where $\boldsymbol{u}$ amd $D_T$ are velocity field and diffusivity of scalar field. 
 
+
+### 3.3 pisoFoam
+This is a transient solver for incompressible flow, which can be used both for laminar and turbulent flow in single phase. Also, the solver assoumes **isothermal** condition. The moment equation that `pisoFoam` solves is
+
+$$\frac{\partial \boldsymbol{u}}{\partial t}+\nabla\cdot(\boldsymbol{uu})=-\frac{1}{\rho}\nabla\bar{p}+\nabla\cdot\nu[2S]+F_t$$
+where $F_t$ is the turbulence term. In the settings of boundary/initial conditions, pressure has a unit of [pressure/density].
 
 ## 4. Discretization
 In CFD, we use Gauss's theorem to transform integrals of divergence terms into sum of inner products on surfaces of each cell (see below). Such inner product requires values of variables at cell surfaces (e.g., $\phi_f$ in the equation below). Thus, we need to choose scheme that decides the strategy of choosing variable values at cell surfaces

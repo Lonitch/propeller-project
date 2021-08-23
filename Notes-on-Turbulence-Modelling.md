@@ -1,16 +1,11 @@
 # Notes on Turbulence Modelling in OpenFOAM
 One of the ends of turbulence modelling spectrum is **Direct Numerical Simulation** (DNS) in which Navier-stokes equation along other governing equations are solved directly. The key to using DNS is discretizing the domian of interest into cells of **Komologorov scale** (Re~1). At such scale, viscous effects of fluid become dominant, and fluid dynamics become simple. Unfortunately, applying Komologorov scale in CFD simulation is not feasible as it is about 1mm in a simulation of global climate. For some special cases, DNS is still possible through some simplification process, e.g., turbulent mixing in a rocket engin combustion chamber.
 
-The other end on the spectrum is **Reynolds Average Simulation** (RAS), which use simple variables to describe turbulent eddies: turbulent viscosity and turbulent kinetic energy. RAS treats chaotic time denpendence of turbulence in an averaging manner, and only average behavior is modelled. The biggest advantage of RAS over DNS is that it's much less computationally intensive, at the expense of lossing details.
+The other end on the spectrum is **Reynolds Average Simulation** (RAS), which use simple variables to describe turbulent eddies: turbulent viscosity and turbulent kinetic energy. RAS treats chaotic time denpendence of turbulence in an averaging manner, and only average behavior is modelled. The biggest advantage of RAS over DNS is that it's much less computationally intensive, at the expense of lossing details. Nevertheless, Many RAS models are **stationary** (e.g. $k-\epsilon$ and $k-\omega$), which contains no time-dependence in its governing equations.
 
 At the middle ground, we have **Large Eddy Simulation** (LES) which is designed to keep useful info without making much computational efforts. LES focuses on large scale turbulent behaviour and does not force cell size to microscopic levels, producing results similar to DNS. Simulation of Aeroelastic flutter usually uses LES.
 
-## SpalartAllmares Model
-Spalart-Allmaras model is a one equation model which solves a transport equation for a viscosity-like variable $\tilde{\nu}$. In OpenFOAM, the model usually uses with `simpleFoam` solver, which is good for incompressible and turbulent flow (without energy equation).
-
-`SpalartAllmaras` is a good model for **incompressible aerospace** simulation, but it is **not for internal flow**. We need to set up $\nu_t$ and $\tilde{\nu}$ with the model, their definitions are given [here](https://www.cfd-online.com/Wiki/Spalart-Allmaras_model). Notice that, **initial values for $\nu_t$ and $\tilde{\nu}$ should be small positive values (~0.001 to 0.2)**.
-
-## k-epsilon Model (simpleFoam)
+## Stationary RAS: k-epsilon Model (simpleFoam)
 The k-epsilon model is one of the most common turbulence models, although it just doesn't perform well in cases of large adverse pressure gradients. It is a two equation model, that means, it includes **two extra transport equations to represent the turbulent properties of the flow**. This allows a two equation model to account for history effects like convection and diffusion of turbulent energy. 
 
 The first transported variable is **turbulent kinetic energy**, $k$. The second transported variable in this case is the **turbulent dissipation**, $\epsilon$. **It is the variable that determines the scale of the turbulence, whereas the first variable, $k$, determines the energy in the turbulence.**
@@ -20,7 +15,7 @@ The first transported variable is **turbulent kinetic energy**, $k$. The second 
  ### Turbulent energy $k$
  The turbulent energy, $k$ can be computed as:
 $$
-k=\frac{3}{2}(U I)^{2}
+k=\frac{3}{2}(U I)^{2}\tag{1}
 $$
 Where $U$ is the mean flow velocity and $I$ is the **turbulence intensity**.
 
@@ -40,18 +35,18 @@ $$
 $$
 $k$ is the turbulent energy and $l$ is the **turbulent length scale**. $C_{\mu}$ is a turbulence model constant which usually has a value of $0.09$. In some CFD codes, such as Fluent, Phoenics and CFD-ACE for example, uses a different length-scale definition based on the mixing-length, and therefore the following formula should be used:
 
-$$\epsilon = C_\mu^\frac{3}{4} \, \frac{k^\frac{3}{2}}{l}.$$
+$$\epsilon = C_\mu^\frac{3}{4} \, \frac{k^\frac{3}{2}}{l}.\tag{2}$$
 
 ### Estimating turbulence length scale $l$
 It is common to set the turbulence length scale to a certain percentage of a typical dimension of the problem. For example, at the inlet to a turbine stage a typical turbulence length scale could be say **5% of the channel height**. In grid-generated turbulence the turbulence length scale is often set to something **close to the size of the grid bars**. 
 
-### k-omega model
+### Stationary RAS: k-omega model
 $k-\omega$ model is a modification to standard $k-\epsilon$ model. Instead of using dissipation rate $\epsilon$, $k-\omega$ model uses **specific dissipation rate**, which can be determined from turbulence length scale and kinetic energy $k$ as
-$$\omega = \frac{\sqrt{k}}{l}.$$
+$$\omega = \frac{\sqrt{k}}{l}.\tag{3}$$
 
 $\omega$ can also be determined from the **eddy viscosity ratio** as
 $$
-\omega=\frac{\rho k}{\mu}\left(\frac{\mu_{t}}{\mu}\right)^{-1}
+\omega=\frac{\rho k}{\mu}\left(\frac{\mu_{t}}{\mu}\right)^{-1}\tag{4}
 $$
 Where $k$ is the turbulent energy, $\rho$ is the density, $\mu$ is the **molecular dynamic viscosity** and $\mu_{t}$ is the **turbulence dynamic viscosity**.
 
@@ -60,7 +55,7 @@ The main advantage with using the eddy viscosity ratio is that **this directly s
 
 In OpenFOAM, **when `SpalartAllmares` or `k-omega` model is used, we need to specify the modified turbulent viscosity**, $\tilde{\nu}$, which can be computed using the following formulas:
 $$
-\tilde{\nu}=\sqrt{\frac{3}{2}}(U I l)
+\tilde{\nu}=\sqrt{\frac{3}{2}}(U I l)\tag{5}
 $$
 Where $U$ is the mean flow velocity, $I$ is the turbulence intensity and $l$ is turbulence length scale.
 
@@ -71,3 +66,49 @@ $$\nu_t=\tilde{\nu}f,$$
 
 and the **turbulence dynamic viscosity** is then
 $$\mu_t = \rho\tilde{\nu}f.$$
+
+Turbulence eddy viscosity can be directly calculated from $k$ and $\epsilon$ ($\omega$) as:
+$$\nu_t=0.09\frac{k^2}{\epsilon}=\frac{k}{\omega}.\tag{6}$$
+In OpenFOAM, an effective viscosity is defined as:
+$$\nu_{eff}=\tilde{\nu}+\nu,$$
+which is used in `simpleFoam` source code.
+
+## Boundary/initial conditions for stationary RAS models
+1. At **inlet**, we use eqn.(1) and (2) to calculate initial values of $k$ and $\epsilon$, respectively. The type of these conditions should be `fixedValue`;
+
+2. At **outlet**,the type of boundary consitions could be `zeroGradient`, and the initial value of $k$ and $\epsilon$ need not be set;
+
+3. At **boundaries**, we need to set 
+- the type of `epsilonWallFunction` for $\epsilon$ with initial value calculated using eqn.(2), 
+- `omegaWallFunction` for $\omega$ with initial value claculated from eqn.(3), 
+- `nutkWallFunction` for $\nu_t$ with initial value being `uniform 0`, 
+- and `kqRwallFunction` for turbulent fields $k$, $q$, and $R$ (LRR model). 
+
+You can consult the relevant directories for a full list of wall function models:
+
+```bash
+find $FOAM_SRC/TurbulenceModels -name wallFunctions
+```
+
+## Transient Models: LES
+The effective turbulence viscosity in transient models is defined as:
+$$\nu_{eff}=\nu+\nu_{sgs}$$
+where $\nu_{sgs}$ is **sub-grid scale** viscosity, and it is calculated by
+
+$$\nu_{sgs}=0.094\cdot\Delta\cdot\sqrt{k}\tag{7}$$
+with $\Delta$ being **cutoff length scale**. $\Delta$ is given by **cubic root of the volume of single cell.**
+
+In OpenFOAM, simple tutorials for using LES can be found at `$FOAM_TUTORIAL/pisoFoam/les/`
+
+### Transient, one-equation model: SpalartAllmares
+Spalart-Allmaras model is a one equation model which solves a transport equation for a viscosity-like variable $\tilde{\nu}$. In OpenFOAM, the model usually uses with `simpleFoam` solver, which is good for incompressible and turbulent flow (without energy equation).
+
+`SpalartAllmaras` is a good model for **incompressible aerospace** simulation, but it is **not for internal flow**. We need to set up $\nu_t$ and $\tilde{\nu}$ with the model, their definitions are given [here](https://www.cfd-online.com/Wiki/Spalart-Allmaras_model). Notice that, **initial values for $\nu_t$ and $\tilde{\nu}$ should be small positive values (~0.001 to 0.2)**.
+
+### Boundary/initial conditions for LES models
+1. settings for $k$ and $\epsilon$ are similar to those for stationary RAS
+2. settings for $\nu_{sgs}$ can simply be `zeroGradient` everywhere in the domain.
+
+## Some "Rules of thumb"
+- Inlet and outlet should be distant from the domain of interest;
+- turbulence length scale $l$ can be roughly estimated as $0.07L$ with $L$ being characteristic length scale.
