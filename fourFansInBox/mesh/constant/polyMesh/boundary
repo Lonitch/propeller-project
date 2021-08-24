@@ -1,0 +1,99 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2106                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    arch        "LSB;label=32;scalar=64";
+    class       polyBoundaryMesh;
+    location    "constant/polyMesh";
+    object      boundary;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+8
+(
+    inlet
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          32;
+        startFace       1457658;
+    }
+    outlet
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          32;
+        startFace       1457690;
+    }
+    walls
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          17264;
+        startFace       1457722;
+    }
+    fans
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          16918;
+        startFace       1474986;
+    }
+    AMI1
+    {
+        type            cyclicAMI;
+        inGroups        1(cyclicAMI);
+        nFaces          22016;
+        startFace       1491904;
+        matchTolerance  0.0001;
+        transform       noOrdering;
+        neighbourPatch  AMI2;
+        AMIMethod       faceAreaWeightAMI;
+        restartUncoveredSourceFace 1;
+    }
+    AMI2
+    {
+        type            cyclicAMI;
+        inGroups        1(cyclicAMI);
+        nFaces          22612;
+        startFace       1513920;
+        matchTolerance  0.0001;
+        transform       noOrdering;
+        neighbourPatch  AMI1;
+        AMIMethod       faceAreaWeightAMI;
+        restartUncoveredSourceFace 1;
+    }
+    AMI3
+    {
+        type            cyclicAMI;
+        inGroups        1(cyclicAMI);
+        nFaces          22016;
+        startFace       1536532;
+        matchTolerance  0.0001;
+        transform       noOrdering;
+        neighbourPatch  AMI4;
+        AMIMethod       faceAreaWeightAMI;
+        restartUncoveredSourceFace 1;
+    }
+    AMI4
+    {
+        type            cyclicAMI;
+        inGroups        1(cyclicAMI);
+        nFaces          22612;
+        startFace       1558548;
+        matchTolerance  0.0001;
+        transform       noOrdering;
+        neighbourPatch  AMI3;
+        AMIMethod       faceAreaWeightAMI;
+        restartUncoveredSourceFace 1;
+    }
+)
+
+// ************************************************************************* //

@@ -1,0 +1,1 @@
+This folder contains all the files for running multi-propeller simulation using OpenFOAM and snappyHexMesh. Details of objects' geometries can be found in the folder `fanConfig`.

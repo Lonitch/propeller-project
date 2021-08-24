@@ -1,0 +1,86 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2106                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dynamicFvMesh   dynamicMultiMotionSolverFvMesh;
+
+dynamicMultiMotionSolverFvMeshCoeffs
+{
+    fan1
+    {
+        solver solidBody;
+        cellZone rotatingZone1;
+        solidBodyCoeffs
+        {
+            solidBodyMotionFunction  rotatingMotion;
+            rotatingMotionCoeffs
+            {
+                origin      (-0.4 0 0.8);
+                axis        (0 0 1);
+                omega       10; // rad/s, 1rad/s=9.5rpm
+            }
+        }
+    }
+
+    fan2
+    {
+        solver solidBody;
+        cellZone rotatingZone2;
+        solidBodyCoeffs
+        {
+            solidBodyMotionFunction  rotatingMotion;
+            rotatingMotionCoeffs
+            {
+                origin      (0.4 0 0.8);
+                axis        (0 0 1);
+                omega       10; // rad/s, 1rad/s=9.5rpm
+            }
+        }
+    }
+
+    fan3
+    {
+        solver solidBody;
+        cellZone rotatingZone3;
+        solidBodyCoeffs
+        {
+            solidBodyMotionFunction  rotatingMotion;
+            rotatingMotionCoeffs
+            {
+                origin      (0 -0.4 0.8);
+                axis        (0 0 1);
+                omega       10; // rad/s, 1rad/s=9.5rpm
+            }
+        }
+    }
+
+    fan4
+    {
+        solver solidBody;
+        cellZone rotatingZone4;
+        solidBodyCoeffs
+        {
+            solidBodyMotionFunction  rotatingMotion;
+            rotatingMotionCoeffs
+            {
+                origin      (0 0.4 0.8);
+                axis        (0 0 1);
+                omega       10; // rad/s, 1rad/s=9.5rpm
+            }
+        }
+    }
+}
+
+// ************************************************************************* //
