@@ -73,6 +73,62 @@ patches
         constructFrom patches;
         patches (cylinder2_slave);
     }
+
+    {
+        //- Master side patch
+        name            AMI5;
+        patchInfo
+        {
+            type            cyclicAMI;
+            matchTolerance  0.0001;
+            neighbourPatch  AMI6;
+            transform       noOrdering;
+        }
+        constructFrom patches;
+        patches (cylinder3);
+    }
+
+    {
+        //- Slave side patch
+        name            AMI6;
+        patchInfo
+        {
+            type            cyclicAMI;
+            matchTolerance  0.0001;
+            neighbourPatch  AMI5;
+            transform       noOrdering;
+        }
+        constructFrom patches;
+        patches (cylinder3_slave);
+    }
+
+    {
+        //- Master side patch
+        name            AMI7;
+        patchInfo
+        {
+            type            cyclicAMI;
+            matchTolerance  0.0001;
+            neighbourPatch  AMI8;
+            transform       noOrdering;
+        }
+        constructFrom patches;
+        patches (cylinder4);
+    }
+
+    {
+        //- Slave side patch
+        name            AMI8;
+        patchInfo
+        {
+            type            cyclicAMI;
+            matchTolerance  0.0001;
+            neighbourPatch  AMI7;
+            transform       noOrdering;
+        }
+        constructFrom patches;
+        patches (cylinder4_slave);
+    }
 );
 
 

@@ -26,7 +26,19 @@ cylinder2S.stl
     includedAngle       150;
 }
 
-twoFansY12.stl
+cylinder3S.stl
+{
+    extractionMethod    extractFromSurface;
+    includedAngle       150;
+}
+
+cylinder4S.stl
+{
+    extractionMethod    extractFromSurface;
+    includedAngle       150;
+}
+
+fourFansS.stl
 {
     extractionMethod    extractFromSurface;
     includedAngle       150;

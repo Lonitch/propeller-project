@@ -44,6 +44,30 @@ boundaryField
         value           uniform (0 0 0);
     }
 
+    AMI5
+    {
+        type            cyclicAMI;
+        value           uniform (0 0 0);
+    }
+
+    AMI6
+    {
+        type            cyclicAMI;
+        value           uniform (0 0 0);
+    }
+
+    AMI7
+    {
+        type            cyclicAMI;
+        value           uniform (0 0 0);
+    }
+
+    AMI8
+    {
+        type            cyclicAMI;
+        value           uniform (0 0 0);
+    }
+
     fans
     {
         type            movingWallVelocity;
@@ -63,6 +87,11 @@ boundaryField
     }
 
     walls
+    {
+        type            noSlip;
+    }
+
+    allBoundary
     {
         type            noSlip;
     }

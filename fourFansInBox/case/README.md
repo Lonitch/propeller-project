@@ -1,6 +1,6 @@
 This folder contains case files for running multi-propeller simulation using `komegaSST` model. 
 
-- The folder `0.100255` contains final results of a 0.1s laminar-flow simulation, you can use paraView to check it
+- Please copy the `polyMesh` folder to `case/constant/` after you generate the mesh using the settings in `mesh` folder.
 
 - Before you run the simulation, please run the command `./Allclean` to clean residual files
 

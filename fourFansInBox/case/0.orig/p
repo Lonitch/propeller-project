@@ -44,6 +44,30 @@ boundaryField
         value           uniform 0;
     }
 
+    AMI5
+    {
+        type            cyclicAMI;
+        value           uniform 0;
+    }
+
+    AMI6
+    {
+        type            cyclicAMI;
+        value           uniform 0;
+    }
+
+    AMI7
+    {
+        type            cyclicAMI;
+        value           uniform 0;
+    }
+
+    AMI8
+    {
+        type            cyclicAMI;
+        value           uniform 0;
+    }
+
     fans
     {
         type            fixedFluxPressure;
@@ -63,6 +87,12 @@ boundaryField
     }
 
     walls
+    {
+        type            fixedFluxPressure;
+        value           uniform 0;
+    }
+
+    allBoundary
     {
         type            fixedFluxPressure;
         value           uniform 0;

@@ -22,10 +22,12 @@ geometry
 {
     cylinder1S.stl{ type triSurfaceMesh; name cylinder1;}
     cylinder2S.stl{ type triSurfaceMesh; name cylinder2;}
+    cylinder3S.stl{ type triSurfaceMesh; name cylinder3;}
+    cylinder4S.stl{ type triSurfaceMesh; name cylinder4;}
     inletS.stl{ type triSurfaceMesh; name inlet;}
     outletS.stl{ type triSurfaceMesh; name outlet;}
     wallsS.stl{ type triSurfaceMesh; name walls;}
-    twoFansY12.stl{ type triSurfaceMesh; name fans;}
+    fourFansS.stl{ type triSurfaceMesh; name fans;}
 }
 
 castellatedMeshControls
@@ -40,7 +42,9 @@ castellatedMeshControls
     (
         { file "cylinder1S.eMesh"; level 3;} // Note: better: level 3
         { file "cylinder2S.eMesh"; level 3;} // Note: better: level 3
-        { file "twoFansY12.eMesh"; level 4;} // Note: better: level 3
+        { file "cylinder3S.eMesh"; level 3;} // Note: better: level 3
+        { file "cylinder4S.eMesh"; level 3;} // Note: better: level 3
+        { file "fourFansS.eMesh"; level 4;} // Note: better: level 3
         { file "inletS.eMesh"; level 0;}
         { file "outletS.eMesh"; level 0;}
         { file "wallsS.eMesh"; level 0;}
@@ -64,6 +68,22 @@ castellatedMeshControls
             faceZone rotatingZone2;
             cellZoneInside inside;
         }
+        cylinder3
+        {
+            level (3 3); // Note: better: levels 3 3
+            faceType boundary;
+            cellZone rotatingZone3;
+            faceZone rotatingZone3;
+            cellZoneInside inside;
+        }
+        cylinder4
+        {
+            level (3 3); // Note: better: levels 3 3
+            faceType boundary;
+            cellZone rotatingZone4;
+            faceZone rotatingZone4;
+            cellZoneInside inside;
+        }
         fans{ level (4 4);} // Note: better: levels 3 3
         outlet{ level (0 0);}
         inlet{ level (0 0);}
@@ -81,7 +101,7 @@ castellatedMeshControls
         // cylinder4{ mode inside; levels ((1E15 3));}
     }
 
-    locationInMesh (0.01 0.01 0.2);
+    locationInMesh (0.01 0.01 0.6);
     allowFreeStandingZoneFaces false;
 }
 

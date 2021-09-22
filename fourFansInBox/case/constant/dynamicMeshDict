@@ -27,7 +27,7 @@ dynamicMultiMotionSolverFvMeshCoeffs
             solidBodyMotionFunction  rotatingMotion;
             rotatingMotionCoeffs
             {
-                origin      (0 -0.9 0.8);
+                origin      (0 -2 0.8);
                 axis        (0 0 1);
                 omega       1; // rad/s, 1rad/s=9.5rpm
             }
@@ -43,7 +43,39 @@ dynamicMultiMotionSolverFvMeshCoeffs
             solidBodyMotionFunction  rotatingMotion;
             rotatingMotionCoeffs
             {
-                origin      (0 0.9 0.8);
+                origin      (0 2 0.8);
+                axis        (0 0 1);
+                omega       1; // rad/s, 1rad/s=9.5rpm
+            }
+        }
+    }
+
+    fan3
+    {
+        solver solidBody;
+        cellZone rotatingZone3;
+        solidBodyCoeffs
+        {
+            solidBodyMotionFunction  rotatingMotion;
+            rotatingMotionCoeffs
+            {
+                origin      (2 0 0.8);
+                axis        (0 0 1);
+                omega       1; // rad/s, 1rad/s=9.5rpm
+            }
+        }
+    }
+
+    fan4
+    {
+        solver solidBody;
+        cellZone rotatingZone4;
+        solidBodyCoeffs
+        {
+            solidBodyMotionFunction  rotatingMotion;
+            rotatingMotionCoeffs
+            {
+                origin      (-2 0 0.8);
                 axis        (0 0 1);
                 omega       1; // rad/s, 1rad/s=9.5rpm
             }
